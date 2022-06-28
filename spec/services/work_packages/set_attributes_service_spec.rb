@@ -575,11 +575,24 @@ describe WorkPackages::SetAttributesService, type: :model do
             .to eql Time.zone.today
         end
 
-        it "sets the duration to 1" do
+        it "sets the duration to nil" do
           subject
 
           expect(work_package.duration)
-            .to eq 1
+            .to be_nil
+        end
+
+        context 'when the work package type is milestone' do
+          before do
+            allow(work_package).to receive(:is_milestone?).and_return(true)
+          end
+
+          it "sets the duration to 1" do
+            subject
+
+            expect(work_package.duration)
+              .to eq 1
+          end
         end
       end
     end
@@ -598,11 +611,24 @@ describe WorkPackages::SetAttributesService, type: :model do
             .to eq(Time.zone.today + 1.day)
         end
 
-        it "sets the duration to 1" do
+        it "sets the duration to nil" do
           subject
 
           expect(work_package.duration)
-            .to eq 1
+            .to be_nil
+        end
+
+        context 'when the work package type is milestone' do
+          before do
+            allow(work_package).to receive(:is_milestone?).and_return(true)
+          end
+
+          it "sets the duration to 1" do
+            subject
+
+            expect(work_package.duration)
+              .to eq 1
+          end
         end
       end
     end
@@ -724,7 +750,10 @@ describe WorkPackages::SetAttributesService, type: :model do
     end
 
     context 'with start date nilled' do
-      let(:work_package) { build_stubbed(:work_package, start_date: Time.zone.today, due_date: Time.zone.today + 5.days) }
+      let(:traits) { [] }
+      let(:work_package) do
+        build_stubbed(:work_package, *traits, start_date: Time.zone.today, due_date: Time.zone.today + 5.days)
+      end
       let(:call_attributes) { { start_date: nil } }
       let(:attributes) { {} }
 
@@ -743,17 +772,31 @@ describe WorkPackages::SetAttributesService, type: :model do
             .to eq(Time.zone.today + 5.days)
         end
 
-        it "sets the duration to 1" do
+        it "sets the duration to nil" do
           subject
 
           expect(work_package.duration)
-            .to eq 1
+            .to be_nil
+        end
+
+        context 'when the work package type is milestone' do
+          let(:traits) { [:is_milestone] }
+
+          it "sets the duration to 1" do
+            subject
+
+            expect(work_package.duration)
+              .to eq 1
+          end
         end
       end
     end
 
     context 'with due date nilled' do
-      let(:work_package) { build_stubbed(:work_package, start_date: Time.zone.today, due_date: Time.zone.today + 5.days) }
+      let(:traits) { [] }
+      let(:work_package) do
+        build_stubbed(:work_package, *traits, start_date: Time.zone.today, due_date: Time.zone.today + 5.days)
+      end
       let(:call_attributes) { { due_date: nil } }
       let(:attributes) { {} }
 
@@ -772,11 +815,22 @@ describe WorkPackages::SetAttributesService, type: :model do
             .to be_nil
         end
 
-        it "sets the duration to 1" do
+        it "sets the duration to nil" do
           subject
 
           expect(work_package.duration)
-            .to eq 1
+            .to be_nil
+        end
+
+        context 'when the work package type is milestone' do
+          let(:traits) { [:is_milestone] }
+
+          it "sets the duration to 1" do
+            subject
+
+            expect(work_package.duration)
+              .to eq 1
+          end
         end
       end
     end
