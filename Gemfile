@@ -252,6 +252,8 @@ group :test do
   gem 'shoulda-matchers', '~> 5.0', require: nil
 
   gem 'parallel_tests', '~> 3.1'
+
+  gem 'super_diff' # A more helpful way to view differences between complex data structures in RSpec.
 end
 
 group :ldap do
