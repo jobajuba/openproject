@@ -37,21 +37,18 @@ describe WorkPackage, type: :model do
     end
     let(:status) { create :default_status }
     let(:priority) { create :priority }
-    let(:work_package) do
-      create(:work_package,
-             project_id: project.id,
-             type:,
-             description: 'Description',
-             priority:,
-             status:)
+    let!(:work_package) do
+      User.execute_as current_user do
+        create(:work_package,
+               project_id: project.id,
+               type:,
+               description: 'Description',
+               priority:,
+               status:)
+      end
     end
-    let(:current_user) { create(:user) }
 
-    before do
-      login_as(current_user)
-
-      work_package
-    end
+    current_user { create(:user) }
 
     context 'on work package creation' do
       it { expect(Journal.all.count).to eq(1) }
@@ -522,14 +519,12 @@ describe WorkPackage, type: :model do
           context 'when adding another change without comment' do
             before do
               work_package.reload # need to update the lock_version, avoiding StaleObjectError
-              changes = { subject: 'foo' }
-
-              work_package.attributes = changes
+              work_package.subject = 'foo'
               work_package.save!
             end
 
             it 'leads to a single journal with the comment of the replaced journal and the state of the second' do
-              expect(subject.count).to be 1
+              expect(subject.count).to eq 1
 
               expect(subject.first.notes)
                 .to eql notes
