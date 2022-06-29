@@ -32,4 +32,10 @@ class Journal::WorkPackageJournal < Journal::BaseJournal
   belongs_to :project
   belongs_to :assigned_to, class_name: 'Principal'
   belongs_to :responsible, class_name: 'Principal'
+
+  def journaled_attributes
+    journaled = super
+    journaled.delete(:duration) unless OpenProject::FeatureDecisions.work_packages_duration_field_active?
+    journaled
+  end
 end
