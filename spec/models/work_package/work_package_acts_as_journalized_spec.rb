@@ -470,7 +470,7 @@ describe WorkPackage, type: :model do
         end
 
         it 'is the initial journal' do
-          expect(subject.first.initial?).to be_truthy
+          expect(subject.first).to be_initial
         end
 
         it 'contains the changes of both updates with the later overwriting the former' do
@@ -505,8 +505,8 @@ describe WorkPackage, type: :model do
             end
 
             it 'has one initial journal and one non-initial journal' do
-              expect(subject.first.initial?).to be_truthy
-              expect(subject.second.initial?).to be_falsey
+              expect(subject.first).to be_initial
+              expect(subject.second).not_to be_initial
             end
           end
 
@@ -551,8 +551,8 @@ describe WorkPackage, type: :model do
       subject(:journals) { work_package.journals }
 
       before do
-        work_package.journals.last.update_columns(created_at: Time.now - 2.minutes,
-                                                  updated_at: Time.now - 2.minutes)
+        work_package.journals.last.update_columns(created_at: 2.minutes.ago,
+                                                  updated_at: 2.minutes.ago)
 
         work_package.status = build(:status)
         work_package.save!
@@ -579,7 +579,7 @@ describe WorkPackage, type: :model do
     end
   end
 
-  context 'on #destroy' do
+  describe '#destroy' do
     let(:project) { create(:project) }
     let(:type) { create(:type) }
     let(:custom_field) do
