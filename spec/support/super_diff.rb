@@ -61,11 +61,13 @@ module SuperDiff
                     year
                     month
                     day
+                    wday
                   ]
                 ) do |name|
                   add_text name.to_s
                   add_text ": "
-                  add_inspection_of date.public_send(name)
+                  value = name == :wday ? date.strftime('%A') : date.public_send(name)
+                  add_inspection_of value
                 end
               end
             end
