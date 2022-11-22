@@ -164,7 +164,7 @@ gem "paper_trail", "~> 12.3"
 group :production do
   # we use dalli as standard memcache client
   # requires memcached 1.4+
-  gem 'dalli', '~> 3.2.0'
+  gem 'dalli', '~> 3.2.3'
 end
 
 gem 'i18n-js', '~> 3.9.0'
